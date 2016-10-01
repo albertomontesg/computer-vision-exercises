@@ -10,4 +10,19 @@
 %                   descriptors
 function matches = matchDescriptors(descr1, descr2, thresh)
 
+    n = size(descr1, 2);
+    m = size(descr2, 2);
+    
+    ssd = zeros(n, m);
+    for i = 1:n
+        for j = 1:m
+            dif = descr1(:,i) - descr2(:,j);
+            ssd(i,j) = dif'*dif;
+        end
+    end
+    
+    match = (ssd>thresh);
+    [r, c] = find(match);
+    matches = [r'; c'];
+
 end
