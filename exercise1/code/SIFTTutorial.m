@@ -28,8 +28,6 @@ showImageWithSIFT(imgBW1, f1(:,sel1), 31);
 showImageWithSIFT(imgBW2, f2(:,sel2), 32);
 
 % Compute the matches of the SIFT descriptors
-%%
 [matches, scores] = vl_ubcmatch(d1, d2);
-
-matches = matches(:,scores>20000);
-showFeatureMatches(img1, f1(1:2, matches(1,:)), img2, d2(1:2, matches(2,:)), 40);
+matches_s = matches(:,scores>5E4);
+showFeatureMatches(img1, f1(1:2, matches_s(1,:)), img2, f2(1:2, matches_s(2,:)), 40);
