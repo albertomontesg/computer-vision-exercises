@@ -9,24 +9,30 @@
 %   H             - n x m gray scale image storing the corner strength
 function [corners, H] = extractHarrisCorner(img, thresh)
 
+    % Define the gradients steps
     dx = [-.5 0 .5];
     dy = dx';
     
+    % Compute the gradient of the image at each axis
     IX = conv2(img, dx, 'same');
     IY = conv2(img, dy, 'same');
 
+    % Apply Gaussian Filter and compute all the Harris matrix values
     blur_filter = fspecial('gaussian');
     IX2 = conv2(IX.^2, blur_filter, 'same');
     IY2 = conv2(IY.^2, blur_filter, 'same');
     IXIY = conv2(IX.*IY, blur_filter, 'same');
     
-    K = (IX2.*IY2 - IXIY.^2) ./ (IX2 + IY2 + eps);
+    % Compute the Harris Response Measure
+    H = (IX2.*IY2 - IXIY.^2) ./ (IX2 + IY2 + eps);
 
-    mx = ordfilt2(K, 9, ones(3));
+    % Non-Maximum-Suppression in a 3 pixel radius;
+    radius = 3;
+    diam = 2*radius + 1;
+    mx = ordfilt2(H, diam^2, ones(diam));
+    cim = (H==mx)&(H>thresh);
     
-    cim = (K==mx)&(K>thresh);
+    % Find the localization of the corners
     [r,c] = find(cim);
-    corners = [r'; c'];
-    
-    H = K;
+    corners = [r'; c'];    
 end

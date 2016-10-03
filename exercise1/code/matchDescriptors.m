@@ -10,10 +10,12 @@
 %                   descriptors
 function matches = matchDescriptors(descr1, descr2, thresh)
 
+    % Initialize the SSD matrix
     n = size(descr1, 2);
     m = size(descr2, 2);
-    
     ssd = zeros(n, m);
+    
+    % Compute the Sum of Square Differences
     for i = 1:n
         for j = 1:m
             dif = descr1(:,i) - descr2(:,j);
@@ -21,7 +23,8 @@ function matches = matchDescriptors(descr1, descr2, thresh)
         end
     end
     
-    match = (ssd>thresh);
+    % Find the positions where the SSD is less than the given thresehold
+    match = (ssd<thresh);
     [r, c] = find(match);
     matches = [r'; c'];
 
