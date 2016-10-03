@@ -12,10 +12,9 @@ function [corners, H] = extractHarrisCorner(img, thresh)
     % Define the gradients steps
     dx = [-.5 0 .5];
     dy = dx';
-    
     % Compute the gradient of the image at each axis
-    IX = conv2(img, dx, 'same');
-    IY = conv2(img, dy, 'same');
+    IX = conv2(padarray(img, [0, 1], 'symmetric'), dx, 'valid');
+    IY = conv2(padarray(img, [1, 0], 'symmetric'), dy, 'valid');
 
     % Apply Gaussian Filter and compute all the Harris matrix values
     blur_filter = fspecial('gaussian');
