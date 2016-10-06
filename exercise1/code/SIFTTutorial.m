@@ -1,6 +1,7 @@
 % SIFT Tutorial
 %
 close all;
+run ~/Development/MATLAB/libraries/vlfeat-0.9.20/toolbox/vl_setup.m
 
 IMG_NAME1 = 'images/I1.jpg';
 IMG_NAME2 = 'images/I2.jpg';
@@ -24,8 +25,10 @@ perm2 = randperm(size(f2,2));
 sel1 = perm1(1:300);
 sel2 = perm2(1:300);
 
-showImageWithSIFT(imgBW1, f1(:,sel1), 31);
-showImageWithSIFT(imgBW2, f2(:,sel2), 32);
+%showImageWithSIFT(imgBW1, f1(:,sel1), 31);
+%showImageWithSIFT(imgBW2, f2(:,sel2), 32);
+showImageWithCorners(img1, f1(1:2,:), 31);
+showImageWithCorners(img2, f2(1:2,:), 32);
 
 % Compute the matches of the SIFT descriptors
 [matches, scores] = vl_ubcmatch(d1, d2);

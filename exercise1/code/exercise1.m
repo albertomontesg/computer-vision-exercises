@@ -23,6 +23,8 @@ imgBW2 = rgb2gray(img2);
 % show images with Harris corners
 showImageWithCorners(img1, corners1, 10);
 showImageWithCorners(img2, corners2, 11);
+print('../report/images/corners1','-djpeg90','-f10')
+print('../report/images/corners2','-djpeg90','-f11')
 
 % Task 1.2 - extract your own descriptors
 descr1 = extractDescriptor(corners1, imgBW1');
@@ -32,3 +34,4 @@ descr2 = extractDescriptor(corners2, imgBW2');
 matches = matchDescriptors(descr1, descr2, .08);
 
 showFeatureMatches(img1, corners1(:, matches(1,:)), img2, corners2(:, matches(2,:)), 20);
+print('../report/images/matching_harris', '-djpeg90', '-f20', '-bestfit')

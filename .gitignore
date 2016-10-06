@@ -184,3 +184,6 @@ TSWLatexianTemp*
 
 # Matlab
 *.m~
+
+# Submissions
+submission*.zip
