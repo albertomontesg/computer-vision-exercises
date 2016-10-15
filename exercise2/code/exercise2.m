@@ -12,11 +12,11 @@ IMG_NAME = 'images/image001.jpg';
 %point.
 %You don't have to do this all the time, just store the resulting xy and
 %XYZ matrices and use them as input for your algorithms.
-[xy XYZ] = getpoints(IMG_NAME);
+% [xy, XYZ] = getpoints(IMG_NAME);
 
 % === Task 2 DLT algorithm ===
 
-%[K, R, t, error] = runDLT(xy, XYZ);
+[K, R, t, error] = runDLT(xy, XYZ);
 
 % === Task 3 Gold Standard algorithm ===
 
