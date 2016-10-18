@@ -120,5 +120,42 @@ Comparison between the DLT method and the Gold Standard algorithm can be found i
 
 \section*{Bouget's Calibration Toolbox}
 
+It has been followed the tutorial given at the statement's reference to calibrate a camera from some taken images.
+The following Figures and Listings contains captures of each step as well as the calibration results.
+At the end there is the extrinsic representation of the camera and the images taken.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/corner_detection_1}
+\end{subfigure}%
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/corner_detection_2}
+\end{subfigure}
+\caption{Corner Detection}
+\end{figure}
+
+\lstinputlisting[language=MATLAB, caption=Calibration Results, label={lst:calibration_results}, firstline=9, lastline=46]{../code/images/camera_calibration/Calib_Results.m}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.9\linewidth]{images/reprojection_image}
+\caption{Reprojected points after calibration}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.9\linewidth]{images/reprojection_error}
+\caption{Reprojected error}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.9\linewidth]{images/extrinsic}
+\caption{Extrinsic parameters in world centered view}
+\end{figure}
+
 
 \end{document}
