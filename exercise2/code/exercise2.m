@@ -1,8 +1,8 @@
 % Exervice 2
 %
 close all;
-
-IMG_NAME = 'images/image001.jpg';
+global IMG_NAME;
+IMG_NAME = 'images/image002.jpg';
 
 %This function displays the calibration image and allows the user to click
 %in the image to get the input points. Left click on the chessboard corners
@@ -13,14 +13,21 @@ IMG_NAME = 'images/image001.jpg';
 %You don't have to do this all the time, just store the resulting xy and
 %XYZ matrices and use them as input for your algorithms.
 % [xy, XYZ] = getpoints(IMG_NAME);
+load('points_002.mat')
 
 % === Task 2 DLT algorithm ===
 
 [K, R, t, error] = runDLT(xy, XYZ);
+display('error DLT:')
+display(error);
+print('../report/images/DLT_reprojected', '-djpeg90', '-f1')
 
 % === Task 3 Gold Standard algorithm ===
 
-%[K, R, t, error] = runGoldStandard(xy, XYZ);
+[K, R, t, error] = runGoldStandard(xy, XYZ);
+display('error GoldStandard:')
+display(error);
+print('../report/images/GoldStd_reprojected', '-djpeg90', '-f2')
 
 % === Bonus: Gold Standard algorithm with radial distortion estimation ===
 
