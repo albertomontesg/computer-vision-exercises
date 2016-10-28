@@ -23,8 +23,8 @@ function MCLLocalization1DOFRobotInTheHallway
     % Fixe the position of the figure to the up left corner
     % Fixe the size depending on the screen size
     scrsz = get(0,'ScreenSize');
-    % figure_handle=figure('Position',[0 0 scrsz(3)/3.5 scrsz(4)]);
-    figure_handle=figure(1);
+    figure_handle=figure('Position',[0 0 scrsz(3)/3.5 scrsz(4)]);
+    %figure_handle=figure(1);
 
     firstTime=ones(6);
 
@@ -34,7 +34,7 @@ function MCLLocalization1DOFRobotInTheHallway
     belief_particles = random('unif',0,simpar.domain,1,simpar.numberOfParticles);
 
 	% The localization algorithm starts here %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	for k = 1:simpar.nSteps
+    for k = 1:simpar.nSteps
 		 DrawRobot(xTrue_k(1), simpar); %Plots the robot 
 
 		 xTrue_k_1=xTrue_k;
@@ -48,7 +48,6 @@ function MCLLocalization1DOFRobotInTheHallway
 		% Aplies the particle filter to localize the robot and draws the
 		% particles in the figure
 		 belief_particles=MCL(belief_particles,uk,zk,simpar);
-
     end
 end
 % The Localization Algorith ends here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +141,7 @@ function DrawGaussian(sp,label,pdf_values,simpar)
     if simpar.animate
         figure(figure_handle);
         subplot(6,1,sp);
-        plot([1:simpar.domain],pdf_values,'-b');
+        plot(1:simpar.domain,pdf_values,'-b');
         axis([0 simpar.domain 0 max(pdf_values)]);
         xlabel(label);
     end
@@ -157,27 +156,58 @@ function updated_belief_particles=MCL(priorbelief_particles,uk,zk,simpar)
 	% This lines must be replaced by your solution to the MCL localization
 	% problem. They are provided only to allow for the execution of the program
 	% before solving the lab.
-	measurement_model_particles=pdf('unif',[1:simpar.domain],0,simpar.domain); % change this value for the correct one
-	predict_particles = priorbelief_particles; % change this value for the correct one
-	updated_belief_particles=priorbelief_particles;% change this value for the correct one
-	pdf_values= pdf('unif',[1:simpar.domain],0,simpar.domain); % change this value for the correct one
-
+    
+    measurement_model_particles=zeros(1,simpar.domain);
+    for i = 1:size(simpar.door_locations,2)
+        measurement_model_particles = measurement_model_particles + pdf('norm', 1:simpar.domain,simpar.door_locations(i), simpar.door_stdev);
+    end
+    measurement_model_particles = measurement_model_particles / sum(measurement_model_particles);
+    
+	%measurement_model_particles=pdf('unif',[1:simpar.domain],0,simpar.domain); % change this value for the correct one
+	predict_particles = sample_motion_model(uk, priorbelief_particles, simpar); % change this value for the correct one
+    weight_particles = measurement_model(zk, predict_particles, simpar);
+    % Resampling Algorithm for the Udacity course
+    index = floor(random('unif', 0, 1) * simpar.numberOfParticles) + 1;
+    beta = 0.;
+    mw = max(weight_particles);
+    updated_belief_particles = zeros(1, simpar.numberOfParticles); % Vector to store the new particles that survive the resampling
+    for i = 1:simpar.numberOfParticles
+        beta = beta + random('unif', 0, 1) * 2 * mw;
+        while beta > weight_particles(index)
+            beta = beta - weight_particles(index);
+            index = mod(index + 1, simpar.numberOfParticles) + 1;
+        end
+        updated_belief_particles(i) = predict_particles(index);
+    end
 
     % plotting the pdfs for the animation 
     DrawParticles(2,'prior',priorbelief_particles,ones(1,simpar.numberOfParticles),simpar);
     DrawParticles(3,'predict',predict_particles,ones(1,simpar.numberOfParticles),simpar);
     DrawGaussian (4,'measurement model',measurement_model_particles,simpar);
-	DrawParticles(5,'Weighted Particles',predict_particles,ones(1,simpar.numberOfParticles), simpar);
+	DrawParticles(5,'Weighted Particles',predict_particles,weight_particles, simpar);
     DrawParticles(6,'update',updated_belief_particles,ones(1,simpar.numberOfParticles), simpar);
 end
 
 function predict_particles=sample_motion_model(uk,prior_belief_particles,simpar)
 % COMPLETE THIS FUNCTION
-    predict_particles=prior_belief; % change this value for the correct one
+    % Here computes the x_t ~ P(x_t|u_k, x_t-1) as a normal distribution
+    % where the mean is the expected position x_k-1+u_k*T and the std has
+    % been set to 2
+    predict_particles = random('norm', prior_belief_particles+uk*simpar.T, 2);
+    predict_particles = mod(predict_particles, simpar.domain);
 end
 
 function particle_weights=measurement_model(zk,pdf_particles,simpar)
 % COMPLETE THIS FUNCTION
     % wk = P( zk | xk )
-    particle_weights=ones(simpar.numberOfParticles); % change this value for the correct one
+    % Compute the P(z_k=1|x_k)
+    particle_weights=zeros(1,simpar.numberOfParticles); % change this value for the correct one
+    for i = 1:size(simpar.door_locations,2)
+        particle_weights = particle_weights + pdf('norm', pdf_particles, simpar.door_locations(i), simpar.door_stdev);
+    end
+    % In the case z_k = 0, return the P(z_k=0|x_k) = 1 - P(z_k=1|x_k)
+    if zk == 0
+        particle_weights = 1 - particle_weights;
+    end
+    particle_weights = particle_weights / sum(particle_weights);
 end
