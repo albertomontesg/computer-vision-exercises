@@ -20,30 +20,24 @@ for i=1:iter
     d = (-data(2,:)+k_i*data(1,:)+b_i) / (sqrt(1+k_i*k_i));
     d = abs(d);
     % Compute the inliers with distances smaller than the threshold
-    inNum = sum(d <= threshDist);
     inIdx = find(d <= threshDist);
-    inRatio = inNum / number;
+    inNum = length(inIdx);
     
     % Update the number of inliers and fitting model if better model is found
-    if inNum > bestInNum
-        bestInNum = inNum;
-        k = k_i;
-        b = b_i;
-    end
-    if inRatio > inlierRatio
-        p_x = data(1, inIdx);
-        p_y = data(2, inIdx);
-        P = polyfit(p_x, p_y, 1);
-        k = P(1); b = P(2);
-        d = (-data(2,:)+k_i*data(1,:)+b_i) / (sqrt(1+k_i*k_i));
-        d = abs(d);
-        inNum = sum(d <= threshDist);
-        if inNum > bestInNum
-            bestInNum = inNum;
-        end
+    if inNum < round(inlierRatio*number)
+        continue
     end
     
-  
-end
+    p_x = data(1, inIdx);
+    p_y = data(2, inIdx);
+    P = polyfit(p_x, p_y, 1);
+    k_i = P(1); b_i = P(2);
+    d = (-data(2,:)+k_i*data(1,:)+b_i) / (sqrt(1+k_i*k_i));
+    d = abs(d);
+    inNum = sum(d <= threshDist);
+    if inNum > bestInNum
+        bestInNum = inNum;
+        k = k_i; b = b_i;
+    end
 
 end

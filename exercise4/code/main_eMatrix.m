@@ -1,7 +1,7 @@
 clickPoints = false;
 
-dataset = 0;   % Your pictures
-% dataset = 1; % ladybug
+% dataset = 0;   % Your pictures
+dataset = 1; % ladybug
 % dataset = 2; % rect
 
 % image names
@@ -51,22 +51,27 @@ figure(2),hold off, imshow(img2, []); hold on, plot(x2s(1,:), x2s(2,:), '*b');
 
 
 %% YOUR CODE ...
+K_inv = inv(K);
 
-% [ ... ]
+[x1n, T1] = normalizePoints2d(x1s);
+[x2n, T2] = normalizePoints2d(x2s);
+nnx1s = K \ x1s;
+nnx2s = K \ x2s;
 
 % estimate fundamental matrix
 [Eh, E] = essentialMatrix(nnx1s, nnx2s);
 
 
 % compute the corresponding epipolar lines from F=K_inv'*E*K_inv
+Fh = K_inv' * Eh * K_inv;
 % draw epipolar lines in img 1
 figure(1)
 for k = 1:size(x1s,2)
-%    drawEpipolarLines(%..., img1);
+    drawEpipolarLines(Fh'*x2s(:,k), img1);
 end
 % draw epipolar lines in img 2
 figure(2)
 for k = 1:size(x2s,2)
-%    drawEpipolarLines(%..., img2);
+    drawEpipolarLines(Fh'*x1s(:,k), img2);
 end
 
