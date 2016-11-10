@@ -12,11 +12,10 @@ k=0; b=0;              % parameters for best fitting line
 for i=1:iter
     % Randomly select 2 points
     idx = randsample(number, num);
-    p_x = data(1,idx);
-    p_y = data(2,idx);
-    P = polyfit(p_x, p_y, 1);
+    points = data(:,idx);
+    P = polyfit(points(1,:), points(2,:), 1);
     k_i = P(1); b_i = P(2);
-    % Compute the distances between all points with the fitting line    
+    % Compute the distances between all points with the fitting line
     d = (-data(2,:)+k_i*data(1,:)+b_i) / (sqrt(1+k_i*k_i));
     d = abs(d);
     % Compute the inliers with distances smaller than the threshold

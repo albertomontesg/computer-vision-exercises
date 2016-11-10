@@ -2,8 +2,8 @@ clickPoints = false;
 
 
 % dataset = 0;   % Your pictures
-dataset = 1; % ladybug
-% dataset = 2; % rect
+% dataset = 1; % ladybug
+dataset = 2; % rect
 
 % image names
 if(dataset==0)

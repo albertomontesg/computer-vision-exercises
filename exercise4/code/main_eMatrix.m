@@ -8,7 +8,7 @@ dataset = 1; % ladybug
 if(dataset==0)
     imgName1 = '';
     imgName2 = '';
-    
+
     % Your camera calibration
     K = [];
 
@@ -46,7 +46,7 @@ else
 end
 
 % show clicked points
-figure(1),hold off, imshow(img1, []); hold on, plot(x1s(1,:), x1s(2,:), '*r');  
+figure(1),hold off, imshow(img1, []); hold on, plot(x1s(1,:), x1s(2,:), '*r');
 figure(2),hold off, imshow(img2, []); hold on, plot(x2s(1,:), x2s(2,:), '*b');
 
 
@@ -61,7 +61,6 @@ nnx2s = K \ x2s;
 % estimate fundamental matrix
 [Eh, E] = essentialMatrix(nnx1s, nnx2s);
 
-
 % compute the corresponding epipolar lines from F=K_inv'*E*K_inv
 Fh = K_inv' * Eh * K_inv;
 % draw epipolar lines in img 1
@@ -72,6 +71,17 @@ end
 % draw epipolar lines in img 2
 figure(2)
 for k = 1:size(x2s,2)
-    drawEpipolarLines(Fh'*x1s(:,k), img2);
+    drawEpipolarLines(Fh*x1s(:,k), img2);
 end
 
+%%
+
+P = decomposeE(Eh, x1s, x2s);
+[XS, ~] = linearTriangulation([eye(3), zeros(3,1)], x1s, P, x2s);
+
+figure(40)
+plot3(XS(1,:), XS(2,:), XS(3,:), 'r+');
+grid on
+xlabel('X')
+ylabel('Y')
+zlabel('Z')

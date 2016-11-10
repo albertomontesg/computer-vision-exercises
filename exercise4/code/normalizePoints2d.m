@@ -11,5 +11,8 @@ function [x_n, T] = normalizePoints2d(x)
     T = [sqrt(2)/mean_dist 0 -sqrt(2)/mean_dist*centroid(1);...
          0 sqrt(2)/mean_dist -sqrt(2)/mean_dist*centroid(2);...
          0 0 1];
+    if size(x, 1) == 2
+        x = [x; ones(1, size(x,2))];
+    end
     x_n = T * x;
 end
