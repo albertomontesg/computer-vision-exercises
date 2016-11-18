@@ -1,24 +1,24 @@
 %
 % Use these variables to enable/disable different parts of the script.
 %
-loadImages           = false;  % also displays silhouettes
-displayVolumeCorners = true;
-computeVisualHull    = false;
+loadImages           = true;  % also displays silhouettes
+displayVolumeCorners = false;
+computeVisualHull    = true;
 displayVolumeSlices  = false;
-displayIsoSurface    = false;
+displayIsoSurface    = true;
 
 %
 % Adjust these variables, one at a time, to get a good visual hull.
 %
 
 % Task 7.1 silhouette threshold
-silhouetteThreshold = 120; 
+silhouetteThreshold = 100; 
 
 % Task 7.2 define bounding box
-bbox = [2.5 2 -2; 3.5 4 3]; % [minX minY minZ; maxX maxY maxZ];
-volumeX = 10;
-volumeY = 10;
-volumeZ = 20;
+bbox = [0 -.5 -2; 2.5 2 3]; % [minX minY minZ; maxX maxY maxZ];
+volumeX = 64;
+volumeY = 64;
+volumeZ = 128;
 volumeThreshold = 17;
 
 home;
@@ -58,7 +58,7 @@ if displayVolumeCorners
     for n=1:numCameras
         figure(2);
         hold off;
-        imshow(ims{n});
+        imshow(sils{n});
         hold on;
         corners = [[      0       0       0 1]' ...
                    [      0       0 volumeZ 1]' ...
@@ -83,25 +83,20 @@ if computeVisualHull
     % Visual hull computation    
     % Task 7.3 Visual hull computation
     %   - add one to volume if projection is within silhouette region
-    for i = 1:volumeX
-        for j = 1:volumeY
-            for k = 1:volumeZ
-                p = [i-.5,j-.5,k-.5,1]';
-                p_w = T * p;
-                for n = 1:numCameras
-                    p_img = Ps{n} * p_w;
-                    p_img = p_img / p_img(3);
-                    p_img = round(p_img);
-                    if p_img(1) <= 0 || p_img(1) > size(sils{n}, 1)
+    for n = 1:numCameras
+        for i = 1:volumeX
+            for j = 1:volumeY
+                for k = 1:volumeZ
+                    p = [i-.5 j-.5 k-.5 1]';
+                    p_img = Ps{n} * T * p;
+                    p_img = round(p_img ./ p_img(3));
+
+                    % Check if the projected point ends out of the image
+                    if p_img(1) <= 0 || p_img(1) > size(sils{n}, 2) || ...
+                       p_img(2) <= 0 || p_img(2) > size(sils{n}, 1)
                         continue;
                     end
-                    if p_img(2) <= 0 || p_img(2) > size(sils{n}, 2)
-                        continue;
-                    end
-                    
-                    if sils{n}(p_img(1),p_img(2))
-                        volume(i,j,k) = volume(i,j,k) + 1;
-                    end
+                    volume(i,j,k) = volume(i,j,k) + sils{n}(p_img(2),p_img(1));
                 end
             end
         end

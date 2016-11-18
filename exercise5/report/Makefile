@@ -18,6 +18,7 @@ all: report
 
 report: $(REPORT_FILE)
 	latexmk -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -jobname=build/$(BUILD_NAME) $(REPORT_FILE)
+	find ./build -type f ! -name '$(BUILD_NAME).pdf' -delete
 
 read:
 	# Only for macOS
