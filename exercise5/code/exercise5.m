@@ -2,9 +2,9 @@
 % Use these variables to enable/disable different parts of the script.
 %
 loadImages           = true;  % also displays silhouettes
-displayVolumeCorners = false;
+displayVolumeCorners = true;
 computeVisualHull    = true;
-displayVolumeSlices  = false;
+displayVolumeSlices  = true;
 displayIsoSurface    = true;
 
 %
@@ -79,7 +79,7 @@ end
 if computeVisualHull
     % Define volume.
     volume = zeros(volumeX,volumeY,volumeZ);
-    
+
     % Visual hull computation    
     % Task 7.3 Visual hull computation
     %   - add one to volume if projection is within silhouette region
