@@ -12,7 +12,7 @@
 % Note that any homogeneous coordinates at infinity (having a scale value of
 % 0) are left unchanged.
 
-% Peter Kovesi  
+% Peter Kovesi
 % School of Computer Science & Software Engineering
 % The University of Western Australia
 % http://www.csse.uwa.edu.au/~pk
@@ -33,7 +33,7 @@ function nx = hnormalise(x)
 
     % Normalise points not at infinity
     for r = 1:rows-1
-	nx(r,finiteind) = x(r,finiteind)./x(rows,finiteind);
+        nx(r,finiteind) = x(r,finiteind)./x(rows,finiteind);
     end
     nx(rows,finiteind) = 1;
     

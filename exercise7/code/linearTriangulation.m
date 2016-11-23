@@ -20,7 +20,7 @@ function  [XS, err] = linearTriangulation(P1, x1s, P2, x2s)
         r4 = x2s(2, k)*P2(3,:) - P2(2,:);
 
         A = [r1; r2; r3; r4];
-        [U S V] = svd(A);
+        [~, S, V] = svd(A);
 
         XS(:,k) = V(:,end)./V(4,end);
         err(1, k) = S(end, end);
