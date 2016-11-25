@@ -57,10 +57,10 @@ function [F,e1,e2] = fundmatrix(varargin)
          x1(1,:)'             x1(2,:)'            ones(npts,1) ];       
 
     if Octave
-	[U,D,V] = svd(A);   % Don't seem to be able to use the economy
+        [U,D,V] = svd(A);   % Don't seem to be able to use the economy
                             % decomposition under Octave here
     else
-	[U,D,V] = svd(A,0); % Under MATLAB use the economy decomposition
+        [U,D,V] = svd(A,0); % Under MATLAB use the economy decomposition
     end
 
     % Extract fundamental matrix from the column of V corresponding to

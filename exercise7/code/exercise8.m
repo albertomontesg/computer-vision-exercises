@@ -25,8 +25,8 @@ img2 = single(imread(imgName2));
 
 %don't take features at the top of the image - only background
 filter = fa(2,:) > 100;
-fa = fa(:,find(filter));
-da = da(:,find(filter));
+fa = fa(:,filter);
+da = da(:,filter);
 
 [matches, scores] = vl_ubcmatch(da, db);
 
@@ -36,115 +36,83 @@ showFeatureMatches(img1, fa(1:2, matches(1,:)), img2, fb(1:2, matches(2,:)), 20)
 
 % use 8-point ransac or 5-point ransac - compute (you can also optimize it to get best possible results)
 % and decompose the essential matrix and create the projection matrices
-t_F = 0.001;
-[F, inliers1] = ransacfitfundmatrix(fa(1:2, matches(1,:)), fb(1:2, matches(2,:)), t_F);
+t_F = 0.05;
+[F, inliers_1] = ransacfitfundmatrix(fa(1:2, matches(1,:)), fb(1:2, matches(2,:)), t_F);
 
-x1 = fa(1:2, matches(1, inliers1));
-x2 = fb(1:2, matches(2, inliers1));
-x1s = makehomogeneous(x1);
-x2s = makehomogeneous(x2);
-x1_normalized = K \ x1s;
-x2_normalized = K \ x2s;
+x1_normalized = K \ makehomogeneous(fa(1:2, matches(1, inliers_1)));
+x2_normalized = K \ makehomogeneous(fb(1:2, matches(2, inliers_1)));
 
-showFeatureMatches(img1, x1, img2, x2, 21);
+showFeatureInliers(img1, fa(1:2, matches(1,:)), img2, fb(1:2,matches(2,:)), inliers_1, 21);
 E = K' * F * K;
 
 Ps{1} = eye(4);
 Ps{2} = decomposeE(E, x1_normalized, x2_normalized);
 
 %triangulate the inlier matches with the computed projection matrix
-[Xs{1}, err] = linearTriangulation(Ps{1}, x1_normalized, Ps{2}, x2_normalized);
+[Xs{1}, ~] = linearTriangulation(Ps{1}, x1_normalized, Ps{2}, x2_normalized);
 
 %% Add an addtional view of the scene 
 
-imgName3 = '../data/house.002.pgm';
+imgName3 = '../data/house.001.pgm';
 img3 = single(imread(imgName3));
 [fc, dc] = vl_sift(img3);
 
 %match against the features from image 1 that where triangulated
-da3 = da(:, matches(1, inliers1));
-fa3 = fa(:, matches(1, inliers1));
-[matches2, ~] = vl_ubcmatch(da3, dc);
+fa_in = fa(:, matches(1,inliers_1));
+da_in = da(:, matches(1,inliers_1));
+[matches_2, ~] = vl_ubcmatch(da_in, dc);
 
-
-[F_3, inliers2] = ransacfitfundmatrix(fa3(1:2, matches2(1,:)), fc(1:2, matches2(2,:)), t_F);
-
-x1_3 = fa3(1:2, matches2(1, inliers2));
-x3 = fc(1:2, matches2(2, inliers2));
-x1s_3 = makehomogeneous(x1_3);
-x3s = makehomogeneous(x3);
-x1_normalized_3 = K \ x1s_3;
-x3_normalized = K \ x3s;
-
-showFeatureMatches(img1, x1_3, img3, x3, 22);
-
-E_3 = K' * F_3 * K;
-%run 6-point ransac
-Ps{3} = decomposeE(E_3, x1_normalized_3, x3_normalized);
+% run 6-point RANSAC
+x3n = K \ makehomogeneous(fc(1:2,matches_2(2,:)));
+X_3 = Xs{1}(:, matches_2(1,:));
+t_F = 0.01;
+[Ps{3}, inliers_2] = ransacfitprojmatrix(x3n, X_3, t_F);
+showFeatureInliers(img1, fa_in(1:2, matches_2(1,:)), img3, fc(1:2,matches_2(2,:)), inliers_2, 22);
 
 %triangulate the inlier matches with the computed projection matrix
-[Xs{2}, err] = linearTriangulation(Ps{1}, x1_normalized_3, Ps{3}, x3_normalized);
+x1n = K \ makehomogeneous(fa_in(1:2,matches_2(1,:)));
+[Xs{2}, ~] = linearTriangulation(Ps{1}, x1n(:,inliers_2), Ps{3}, x3n(:,inliers_2));
 
 %% Add more views... 1
 
-imgName4 = '../data/house.003.pgm';
+imgName4 = '../data/house.002.pgm';
 img4 = single(imread(imgName4));
 [fd, dd] = vl_sift(img4);
 
-%match against the features from image 1 that where triangulated
-da4 = da(:, matches(1, inliers1));
-fa4 = fa(:, matches(1, inliers1));
-[matches3, ~] = vl_ubcmatch(da4, dd);
+% match against the features from image 1 that where triangulated
+[matches_3, ~] = vl_ubcmatch(da(:, matches(1,inliers_1)), dd);
 
-
-[F_4, inliers3] = ransacfitfundmatrix(fa4(1:2, matches3(1,:)), fd(1:2, matches3(2,:)), t_F);
-
-x1_4 = fa4(1:2, matches3(1, inliers3));
-x4 = fd(1:2, matches3(2, inliers3));
-x1s_4 = makehomogeneous(x1_4);
-x4s = makehomogeneous(x4);
-x1_normalized_4 = K \ x1s_4;
-x4_normalized = K \ x4s;
-
-showFeatureMatches(img1, x1_4, img3, x4, 23);
-
-E_4 = K' * F_4 * K;
-%run 6-point ransac
-Ps{4} = decomposeE(E_4, x1_normalized_4, x4_normalized);
-
+% run 6-point RANSAC
+x4n = K \ makehomogeneous(fd(1:2,matches_3(2,:)));
+x1n = K \ makehomogeneous(fa_in(1:2,matches_3(1,:)));
+t_F = 0.02;
+[Ps{4}, inliers_3] = ransacfitprojmatrix(x4n, Xs{1}(:, matches_3(1,:)), t_F);
+showFeatureInliers(img1, fa_in(1:2, matches_3(1,:)), img4, fd(1:2,matches_3(2,:)), inliers_3, 23);
 %triangulate the inlier matches with the computed projection matrix
-[Xs{3}, err] = linearTriangulation(Ps{1}, x1_normalized_3, Ps{3}, x3_normalized);
+x4_normalized = x4n(:, inliers_3);
+[Xs{3}, ~] = linearTriangulation(Ps{1}, x1n(:,inliers_3), ...
+    Ps{4}, x4n(:,inliers_3));
+
 
 %% Add more views...2
 
-imgName3 = '../data/house.002.pgm';
-img3 = single(imread(imgName3));
-[fc, dc] = vl_sift(img3);
+imgName5 = '../data/house.003.pgm';
+img5 = single(imread(imgName5));
+[fe, de] = vl_sift(img5);
 
 %match against the features from image 1 that where triangulated
-da3 = da(:, matches(1, inliers1));
-fa3 = fa(:, matches(1, inliers1));
-[matches2, ~] = vl_ubcmatch(da3, dc);
+[matches_4, ~] = vl_ubcmatch(da(:, matches(1,inliers_1)), de);
 
-
-[F_3, inliers2] = ransacfitfundmatrix(fa3(1:2, matches2(1,:)), fc(1:2, matches2(2,:)), t_F);
-
-x1_3 = fa3(1:2, matches2(1, inliers2));
-x3 = fc(1:2, matches2(2, inliers2));
-x1s_3 = makehomogeneous(x1_3);
-x3s = makehomogeneous(x3);
-x1_normalized_3 = K \ x1s_3;
-x3_normalized = K \ x3s;
-
-showFeatureMatches(img1, x1_3, img3, x3, 22);
-
-E_3 = K' * F_3 * K;
-%run 6-point ransac
-Ps{3} = decomposeE(E_3, x1_normalized_3, x3_normalized);
+% run 6-point RANSAC
+x5n = K \ makehomogeneous(fe(1:2,matches_4(2,:)));
+x1n = K \ makehomogeneous(fa_in(1:2,matches_4(1,:)));
+t_F = 0.02;
+[Ps{5}, inliers_4] = ransacfitprojmatrix(x5n, Xs{1}(:, matches_4(1,:)), t_F);
+showFeatureInliers(img1, fa_in(1:2, matches_4(1,:)), img5, fe(1:2,matches_4(2,:)), inliers_4, 24);
 
 %triangulate the inlier matches with the computed projection matrix
-[Xs{2}, err] = linearTriangulation(Ps{1}, x1_normalized_3, Ps{3}, x3_normalized);
-
+[Xs{4}, ~] = linearTriangulation(Ps{1}, x1n(:,inliers_4), ...
+    Ps{5}, x5n(:,inliers_4));
 
 
 %% Plot stuff
@@ -153,11 +121,18 @@ fig = 10;
 figure(fig);
 
 %use plot3 to plot the triangulated 3D points
-plot3(Xs{1}(1,:), Xs{1}(2,:), Xs{1}(3,:), '.r')
-% plot3(Xs{1}(1,:), Xs{1}(2,:), Xs{1}(3,:), '.r',...
-%     Xs{2}(1,:), Xs{2}(2,:), Xs{2}(3,:), '.b',...
-%     Xs{3}(1,:), Xs{3}(2,:), Xs{3}(3,:), '.g');
+plot3(Xs{1}(1,:), Xs{1}(2,:), Xs{1}(3,:), '*r');
+hold on; plot3(Xs{2}(1,:), Xs{2}(2,:), Xs{2}(3,:), '*b');
+hold on; plot3(Xs{3}(1,:), Xs{3}(2,:), Xs{3}(3,:), '*g');
+hold on; plot3(Xs{4}(1,:), Xs{4}(2,:), Xs{4}(3,:), '*y');
+% plot3(Xs{1}(1,:), Xs{1}(2,:), Xs{1}(3,:), '*r',...
+%      Xs{2}(1,:), Xs{2}(2,:), Xs{2}(3,:), '*b',...
+%      Xs{3}(1,:), Xs{3}(2,:), Xs{3}(3,:), '*g',...
+%      Xs{4}(1,:), Xs{4}(2,:), Xs{4}(3,:), '*y')
 
 %draw cameras
 drawCameras(Ps, fig);
-%axis([-1 1 -1 1 0 2]);
+axis([-1 1 -1 1 0 2]);
+
+%% Dense Reconstruction
+
