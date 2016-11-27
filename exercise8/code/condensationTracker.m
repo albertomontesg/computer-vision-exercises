@@ -3,13 +3,13 @@ function condensationTracker(videoName,params)
 %
 % videoName  - videoName 
 % params - parameters structure
-%        . draw_plots {0,1} draw output plots throughout
-%        . hist_bin   1-255 number of histogram bins for each color: proper values 4,8,16
-%        . alpha      number in [0,1]; color histogram update parameter (0 = no update)
+%        . draw_plots       {0,1} draw output plots throughout
+%        . hist_bin         1-255 number of histogram bins for each color: proper values 4,8,16
+%        . alpha            number in [0,1]; color histogram update parameter (0 = no update)
 %        . sigma_position   std. dev. of system model position noise
 %        . sigma_observe    std. dev. of observation model noise
 %        . num_particles    number of particles
-%        . model      {0,1} system model (0 = no motion, 1 = constant velocity)
+%        . model            {0,1} system model (0 = no motion, 1 = constant velocity)
 %
 % if using model = 1 then the following parameters are used:
 %        . sigma_velocity   std. dev. of system model velocity noise
@@ -104,7 +104,7 @@ meanStateAPriori = zeros(length(frameValues),state_length); % a priori mean stat
 meanStateAPosteriori = zeros(length(frameValues),state_length); % a posteriori mean state
 meanStateAPriori(1,1:2) = [initialBB(1)+0.5*initialBB(3) initialBB(2)+0.5*initialBB(4)]; % bounding box centre
 
-if (params.model==1 )    
+if ( params.model==1 )    
     meanStateAPriori(1,3:4) = params.initial_velocity; % use initial velocity
 end
 
