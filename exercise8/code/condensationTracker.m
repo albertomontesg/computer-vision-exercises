@@ -1,4 +1,4 @@
-function condensationTracker(videoName,params)
+function condensationTracker(videoName, params, text)
 %condensationTracker(videoName,params)
 %
 % videoName  - videoName 
@@ -18,9 +18,9 @@ function condensationTracker(videoName,params)
 % Computer Vision - Autumn 2016
 % Exercise 08 - Tracking
 
-videoName = 'video1';
-videoPath= 'data/';
-load([videoPath 'params']);
+% videoName = 'video1';
+% videoPath= 'data/';
+% load([videoPath 'params']);
 
 
 % initialize the random generator
@@ -65,7 +65,6 @@ end
 if(use_wmv)
     frame = read(vid,firstFrame);
 else
-    %     frame = vid(firstFrame).cdata;
     frame = read(vid,firstFrame);
 end
 
@@ -202,10 +201,15 @@ for i = 1:length(frameValues)
     
     % RESAMPLE PARTICLES
     %=== implement function resample.m ===
-    [particles particles_w] = resample(particles,particles_w);
+    [particles, particles_w] = resample(particles,particles_w);
     %======================
-      
-    waitforbuttonpress;
+    
+    if mod(i-1,5) == 0
+        fname = sprintf('../report/images/%s_%s_%d.jpg', videoName, text, i);
+        print('-djpeg90', '-f1', fname);
+    end
+    %pause(.5);
+    %waitforbuttonpress;
     
 end
 
