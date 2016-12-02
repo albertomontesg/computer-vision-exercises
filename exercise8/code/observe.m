@@ -18,7 +18,7 @@ for i = 1:numParticles
     hist = color_histogram(xMin, yMin, xMax, yMax, frame, hist_bin);
     
     particles_w(i) = 1 / (sqrt(2*pi) * sigma_observe) * ...
-        exp( -(chi2_cost(hist, hist_target)) / (2 * sigma_observe^2));
+        exp( -(chi2_cost(hist, hist_target))^2 / (2 * sigma_observe^2));
     
 end
 
