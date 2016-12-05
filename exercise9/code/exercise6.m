@@ -1,4 +1,3 @@
-function run_ex5()
 
 % load image
 img = imread('cow.jpg');
@@ -10,21 +9,20 @@ figure, imshow(img), title('original image')
 
 % smooth image (6.1a)
 % (replace the following line with your code for the smoothing of the image)
-imgSmoothed = ...;
+imgSmoothed = imgaussfilt(img, 5., 'FilterSize', [5 5]);
 figure, imshow(imgSmoothed), title('smoothed image')
 
-% convert to L*a*b* image (6.1b)
-% (replace the folliwing line with your code to convert the image to lab
+%% convert to L*a*b* image (6.1b)
+% (replace the folliwing line with your code to convert the image to Lab
 % space
-imglab = ...;
+imglab = applycform(imgSmoothed, makecform('srgb2lab'));
 figure, imshow(imglab), title('l*a*b* image')
 
-% (6.2)
-[mapMS peak] = meanshiftSeg(imglab);
+%% Mean-Shift segmentation (6.2)
+imglab = imresize(imglab, [20, 30]);
+[mapMS, peak] = meanshiftSeg(imglab);
 visualizeSegmentationResults (mapMS,peak);
 
-% (6.3)
-[mapEM cluster] = EM(imglab);
+%% EM Segmentation (6.3)
+[mapEM, cluster] = EM(imglab);
 visualizeSegmentationResults (mapEM,cluster);
-
-end
