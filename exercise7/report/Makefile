@@ -1,6 +1,6 @@
 
-REPORT_FILE=report_hw7.tex
-BUILD_NAME=report_hw7
+REPORT_FILE=report_hw8.tex
+BUILD_NAME=report_hw8
 DEFAULT_READER=Preview.app
 
 # The first rule in a Makefile is the one executed by default ("make"). It
