@@ -6,8 +6,20 @@ function [ map, peaks ] = mean_shift( X, r )
     
     % Compute the peaks for each point
     peaks = zeros(nPoints, 3);
+    map = zeros(nPoints, 1);
+    count = 0;
     for i = 1:nPoints
-        peaks(i,:) = find_peak(X, X(i,:), r);
+        peak = find_peak(X, X(i,:), r);
+        % In case is the first point computed
+        if i == 1
+            peaks(i,:) = peak;
+            continue;
+        end
+        
+        % Compute the distance of the new peak agains all the prev ones
+        d = peaks;
+        % TODO
+        
     end
     
     % Merge the peaks closer a distance less than r/2
@@ -16,6 +28,11 @@ function [ map, peaks ] = mean_shift( X, r )
             peaks(:,1), peaks(:,2), peaks(:,3), 'xg');
     end
     
+    while true
+        
+    end
+    
+    % TODO
     map = zeros(size(X,1), 1);
     peaks = 0;
 

@@ -9,7 +9,7 @@ function [ peak ] = find_peak( X, x_l, r )
     if DEBUG
         figure, plot3(X(:,1), X(:,2), X(:,3), '.r');
     end
-    th = 0.005;
+    tol = 0.005;
     x_p = x_l;
 
     while true
@@ -20,7 +20,7 @@ function [ peak ] = find_peak( X, x_l, r )
         d = sum((X-x_r).^2, 2);
         x_l = mean(X(d<=r^2,:), 1);
         
-        if (x_p - x_l) * (x_p - x_l)' < th^2
+        if (x_p - x_l) * (x_p - x_l)' < tol^2
             break
         end
         
