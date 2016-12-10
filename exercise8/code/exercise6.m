@@ -19,7 +19,6 @@ imglab = applycform(imgSmoothed, makecform('srgb2lab'));
 figure, imshow(imglab), title('l*a*b* image')
 
 %% Mean-Shift segmentation (6.2)
-imglab = imresize(imglab, [20, 30]);
 [mapMS, peak] = meanshiftSeg(imglab);
 visualizeSegmentationResults (mapMS,peak);
 

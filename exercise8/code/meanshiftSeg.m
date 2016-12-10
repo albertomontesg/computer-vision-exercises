@@ -1,5 +1,5 @@
 function [map, peaks] = meanshiftSeg(img)
-    r = 0.03;
+    r = 0.04;
 
     [h, w, c] = size(img);
     X = reshape(img, [h*w, c]);

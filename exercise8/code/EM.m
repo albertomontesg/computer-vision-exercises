@@ -33,10 +33,6 @@ function [map, cluster] = EM(img)
         log_lh = l_lh;
     end
     
-    alpha
-    mu
-    var
-    
     % A final computation of expectation
     [I, ~] = expectation(mu, var, alpha, X);
     % Map all the pixels to its most probable segment

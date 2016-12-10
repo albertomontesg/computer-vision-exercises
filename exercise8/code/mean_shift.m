@@ -1,39 +1,47 @@
 function [ map, peaks ] = mean_shift( X, r )
-%mean_shift Mean-shift algorithm
+%MEAN_SHIFT Mean-shift algorithm
 %   
-    DEBUG = true;
+    DEBUG = false;
     nPoints = size(X, 1);
     
-    % Compute the peaks for each point
-    peaks = zeros(nPoints, 3);
-    map = zeros(nPoints, 1);
-    count = 0;
+    % Initialize containers to store the peaks and the mapping to clusters
+    pointsPeaks = zeros(nPoints, 3) - 1;
+    map = zeros(nPoints, 1) - 1;
+    cluster = 0; % Initial cluster id
+
     for i = 1:nPoints
+        % Compute the peaks for each point
         peak = find_peak(X, X(i,:), r);
-        % In case is the first point computed
-        if i == 1
-            peaks(i,:) = peak;
-            continue;
+        % Compute the distance of the current peak to the already find ones
+        d = sum((pointsPeaks(1:i,:) - repmat(peak, [i, 1])).^2, 2);
+        [min_d, min_i] = min(d);
+        
+        % MERGING PEAKS
+        % If the distance to the closest peak is greater than the r/2, the
+        % new peak correspond to a new cluster
+        if min_d > (r/2)^2
+            cluster = cluster + 1;
+            map(i) = cluster;
+        % If its closer than r/2, fuse both peak to the same cluster
+        % assigning the cluster id of the closest peak.
+        else
+            map(i) = map(min_i);
         end
         
-        % Compute the distance of the new peak agains all the prev ones
-        d = peaks;
-        % TODO
+        pointsPeaks(i,:) = peak;
         
     end
     
-    % Merge the peaks closer a distance less than r/2
+    % Now for each point with the same mapping, compute the center of the
+    % cluster to return it as a peak
+    peaks = zeros(cluster, 3);
+    for c = 1:cluster
+        peaks(c,:) = mean(X(map==c,:), 1);
+    end
+    
     if DEBUG
         figure, plot3(X(:,1), X(:,2), X(:,3), '.r',...
             peaks(:,1), peaks(:,2), peaks(:,3), 'xg');
     end
-    
-    while true
-        
-    end
-    
-    % TODO
-    map = zeros(size(X,1), 1);
-    peaks = 0;
 
 end
