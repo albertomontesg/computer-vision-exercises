@@ -79,8 +79,30 @@ This color space is used in segmentation as it makes easier to differ from diffe
 
 \section*{Mean-Shift Segmentation}
 
+The first segmentation algorithm to implement is the Mean-Shift. First it has been implemented a function that for each pixel, find the mode of the density function defined by all the images pixels points.
+This function iterates computing the points that are closer than a radius $r$, and then recompute the center as the mean of all the points.
+This iterates until the center does not change less than a tolerance.
 
+Then to compute the segmentation, for each point its peak is computed and if no other previously computed peak is closer than $r/2$, this new point define a new cluster.
+If the peak is closer than $r/2$ to any of the other previously computed peaks, then the current point is assigned to the closest peak cluster.
 
+In the Figure~\ref{fig:mean_shift} can be the result of the segmentation of the cow image.
+The values used at the implementation are: $0.005$ as the tolerance of convergence when finding the peak for each pixel; $r = 0.04$ to compute find peak function and also to merge the peaks to form clusters.
+The resulting segmentation returns $16$ segments. On the image can be seen how there is 3 major segmented pixels corresponding to the background (grass), and then to the white and black color of the cow. The other segments correspond to transition pixels between this segments.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.5\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{images/seg_mean_shift}
+    \end{subfigure}%
+    \begin{subfigure}[b]{.5\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{images/seg_mean_shift_color}
+    \end{subfigure}
+    \caption{Segmentation using the Mean-Shift algorithm.}
+    \label{fig:mean_shift}
+\end{figure}
 
 \section*{EM Segmentation}
 

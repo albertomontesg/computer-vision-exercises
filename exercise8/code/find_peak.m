@@ -3,35 +3,29 @@ function [ peak ] = find_peak( X, x_l, r )
 %   X is the density function
 %   x_l pixel information
 %   r radius
-    DEBUG = false;
     n_points = size(X, 1);
     
-    if DEBUG
-        figure, plot3(X(:,1), X(:,2), X(:,3), '.r');
-    end
+    % Define tolerance and starting center
     tol = 0.005;
     x_p = x_l;
 
     while true
-        if DEBUG
-            hold on, plot3(x_p(1), x_p(2), x_p(3), 'gx');
-        end
+        % Compute the distance from the center to all the points
         x_r = repmat(x_l, [n_points, 1]);
         d = sum((X-x_r).^2, 2);
+        % Recompute the center from the points closer than r
         x_l = mean(X(d<=r^2,:), 1);
         
+        % Check convergence criterion
         if (x_p - x_l) * (x_p - x_l)' < tol^2
             break
         end
         
-        if DEBUG
-            plot3([x_p(1), x_l(1)],...
-                [x_p(2), x_l(2)],...
-                [x_p(3), x_l(3)], '-b');
-        end
+        % Update the center
         x_p = x_l;
         
     end
+    % Return the peak
     peak = x_l;
 end
 

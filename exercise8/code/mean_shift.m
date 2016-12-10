@@ -1,7 +1,6 @@
 function [ map, peaks ] = mean_shift( X, r )
 %MEAN_SHIFT Mean-shift algorithm
 %   
-    DEBUG = false;
     nPoints = size(X, 1);
     
     % Initialize containers to store the peaks and the mapping to clusters
@@ -37,11 +36,6 @@ function [ map, peaks ] = mean_shift( X, r )
     peaks = zeros(cluster, 3);
     for c = 1:cluster
         peaks(c,:) = mean(X(map==c,:), 1);
-    end
-    
-    if DEBUG
-        figure, plot3(X(:,1), X(:,2), X(:,3), '.r',...
-            peaks(:,1), peaks(:,2), peaks(:,3), 'xg');
     end
 
 end

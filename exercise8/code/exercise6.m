@@ -8,8 +8,9 @@ img = imread('cow.jpg');
 figure, imshow(img), title('original image')
 
 % smooth image (6.1a)
-% (replace the following line with your code for the smoothing of the image)
-imgSmoothed = imgaussfilt(img, 5., 'FilterSize', [5 5]);
+% (replace the following line with your code for the smoothing of the
+% image)
+imgSmoothed = imfilter(img, fspecial('gaussian', [5 5], 5.));
 figure, imshow(imgSmoothed), title('smoothed image')
 
 %% convert to L*a*b* image (6.1b)
