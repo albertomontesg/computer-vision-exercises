@@ -1,6 +1,6 @@
 function [map, cluster] = EM(img)
 
-    K = 5;
+    K = 3;
     tol = 0.0002;
     
     % Flat all the pixels and normalize values to scale [0, 1] 

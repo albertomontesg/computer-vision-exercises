@@ -21,7 +21,7 @@ figure, imshow(imglab), title('l*a*b* image')
 
 %% Mean-Shift segmentation (6.2)
 [mapMS, peak] = meanshiftSeg(imglab);
-visualizeSegmentationResults (mapMS,peak);
+visualizeSegmentationResults (mapMS, peak);
 
 %% EM Segmentation (6.3)
 [mapEM, cluster] = EM(imglab);
