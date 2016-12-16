@@ -17,12 +17,13 @@ function vCenters = create_codebook(nameDir,k,numiter)
     
     disp(strcat('  Processing image ', num2str(i),'...'));
     
-    % load the image
-    img = double(rgb2gray(imread(fullfile(sDir,vImgNames(i).name))));
+    % Load the image
+    img = double(rgb2gray(imread(fullfile(nameDir,vImgNames(i).name))));
 
     % Collect local feature points for each image
-    % and compute a descriptor for each local feature point
-    % ...
+    featPoints = grid_points(img, nPointsX, nPointsY, border);
+    % Compute a descriptor for each local feature point
+    
     % create hog descriptors and patches
     % ...	
     

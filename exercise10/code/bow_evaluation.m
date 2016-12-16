@@ -3,19 +3,19 @@
 % Alex Mansfield and Bogdan Alexe, HS 2011
 %
 
-%training
+%% training
 disp('creating codebook');
 sizeCodebook = 200;
 numIterations = 10;
 vCenters = create_codebook('../data/cars-training-pos',sizeCodebook,numIterations);
-%keyboard;
+%% keyboard;
 disp('processing positve training images');
 vBoWPos = create_bow_histograms('../data/cars-training-pos',vCenters);
 disp('processing negative training images');
 vBoWNeg = create_bow_histograms('../data/cars-training-neg',vCenters);
 %vBoWPos_test = vBoWPos;
 %vBoWNeg_test = vBoWNeg;
-%keyboard;
+%% keyboard;
 disp('processing positve testing images');
 vBoWPos_test = create_bow_histograms('../data/cars-testing-pos',vCenters);
 disp('processing negative testing images');
