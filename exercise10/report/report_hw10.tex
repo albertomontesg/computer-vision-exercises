@@ -1,0 +1,101 @@
+\documentclass{ethz_report}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{subcaption}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1,1,1}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=lines
+}
+\lstset{style=mystyle}
+
+\title{Exercise 10 - Image Categorization}
+\subject{Computer Vision}
+\author{Alberto Montes}
+\email{malberto@student.ethz.ch}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Local Feature Extraction}
+
+To extract the local features for each image, first it requires to implement the function to extract the grid points positions for each image.
+The implementation is on Listing~\ref{lst:grid_points} where the coordinates of the grid points are found and returned.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{grid\_points.m}, label={lst:grid_points}]{../code/grid_points.m}
+
+The next step is for each of the points of the grid at each image, compute the Histogram of oriented Gradients for $4 \times 4$ grid pixels. The implementation is in Listing~\ref{lst:descriptors_hog} where for each points the descriptor is computed and also the patch of each descriptor is returned.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{descriptors\_hog.m}, label={lst:descriptors_hog}]{../code/descriptors_hog.m}
+
+\section*{Codebook Construction}
+
+Once with the descriptors and patches extracted for each image, is time to construct the codebook.
+To do so, a k-means cluster algorithm is run to obtain an specific number of clusters centers to build the codebook. For the implementation, the codebook size its fixed in 200 codes.
+
+For the k-means algorithm implementation first requires to implement the \texttt{findnn} (Listing~\ref{lst:findnn}) function which find to each descriptor the other ones which are closest.
+With this function, the k-means algorithm has been implemented as shown in Listing~\ref{lst:kmeans}.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{findnn.m}, label={lst:findnn}]{../code/findnn.m}
+
+\lstinputlisting[language=MATLAB, caption=\texttt{kmeans.m}, label={lst:kmeans}]{../code/kmeans.m}
+
+Finally the whole pipeline of creating the codebook is coded in Listing~\ref{lst:create_codebook}.
+The pipeline iterates over all the images and for each on first convert it to gray scale, then obtain the grid points coordinates with the \texttt{grid\_points} function. Then obtain the descriptor for each of this points and the image patch using the \texttt{descriptors\_hog} function.
+Finally with all the image's descriptors, cluster them with the \texttt{kmeans} algorithm and obtain the cluster centers as classification codebook. The whole pipeline implementation is on Listing~\ref{lst:create_codebook}.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{create\_codebook.m}, label={lst:create_codebook}]{../code/create_codebook.m}
+
+For the training data given with the assignment, and computing a codebook with size 200, the visualization of the codebook is on Figure~\ref{fig:visualize_codebook} where the patches of the closest descriptors to the codebook cluster's centers are plot.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/visualize_codebook}
+    \caption{Visualization of the codebook for $K=200$.}
+    \label{fig:visualize_codebook}
+\end{figure}
+
+\section*{Bag-of-Words Image Representation}
+
+Once the codebook has been defined, for each image is extracted a bunch of descriptors which each one will be match to one of the codebook's code or visual word.
+The purpose of the bag-of-words is to represent an image as an histogram of the visual words appearing on it, and with this histogram then perform a classification.
+To do so, first the \texttt{bow\_histogram} function has been implemented (in Listing~\ref{lst:bow_histogram}) which for each image given extract the histogram of visual words, given the codebook previously found.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{bow\_histogram.m}, label={lst:bow_histogram}]{../code/bow_histogram.m}
+
+To perform a classification, is necessary to precompute this BoW histograms to all the training examples and store to further classify the test dataset. This is performed in the function \texttt{create\_bow\_histogram} on Listing~\ref{lst:create_bow_histograms}.
+
+\lstinputlisting[language=MATLAB, caption=\texttt{create\_bow\_histograms.m}, label={lst:create_bow_histograms}]{../code/create_bow_histograms.m}
+
+\section*{Nearest Neighbor Classification}
+
+\section*{Bayesian Classification}
+
+\section*{Results and Conclusions}
+
+Create a table that for different values of K (sizeCodebook) the result for each of the classification methods.
+
+\end{document}

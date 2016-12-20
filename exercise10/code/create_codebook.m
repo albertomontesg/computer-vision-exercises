@@ -27,8 +27,7 @@ function vCenters = create_codebook(nameDir,k,numiter)
         vPoints = grid_points(img, nPointsX, nPointsY, border);
         % Compute a descriptor for each local feature point
         [descriptors, patches] = descriptors_hog(img, vPoints, cellWidth, cellHeight);
-        % create hog descriptors and patches
-        % ...
+        % Create hog descriptors and patches
         vFeatures(((c-1)*nPoints+1):c*nPoints,:) = descriptors;
         vPatches(((c-1)*nPoints+1):c*nPoints,:) = patches;
 

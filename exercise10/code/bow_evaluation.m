@@ -1,6 +1,6 @@
 %
-% BAG OF WORDS RECOGNITION EXERCISE
-% Alex Mansfield and Bogdan Alexe, HS 2011
+% IMAGE CATEGORIZATION EXERCISE
+% Alberto Montes, Computer Vision 2016
 %
 
 % training

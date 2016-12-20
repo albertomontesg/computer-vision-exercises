@@ -1,5 +1,5 @@
 function [descriptors,patches] = descriptors_hog(img,vPoints,cellWidth,cellHeight)
-
+%DESCRIPTORS_HOG
     nBins = 8;
     w = cellWidth; % set cell dimensions
     h = cellHeight;
