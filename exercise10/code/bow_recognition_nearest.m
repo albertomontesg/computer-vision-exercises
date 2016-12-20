@@ -1,5 +1,5 @@
 function sLabel = bow_recognition_nearest(histogram,vBoWPos,vBoWNeg)
-  
+    %BOW_RECOGNITION_NEAREST
     % Find the nearest neighbor in the positive and negative sets
     % and decide based on this neighbor
     

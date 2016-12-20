@@ -92,45 +92,59 @@ To perform a classification, is necessary to precompute this BoW histograms to a
 
 \section*{Nearest Neighbor Classification}
 
+With all the Bag of Words computed for the training samples and also for the testing samples, two methods to classify whether in an image there is a car or not are proposed.
+The first method consist on the Nearest Neighbor where for each test samples is computed the distance of the BoW to each of the training samples and the class of the closest distance is returned. The implementation is on Listing~\ref{lst:bow_recognition_nearest} which it has been very easy to code.
 
 \lstinputlisting[language=MATLAB, caption=\texttt{bow\_recognition\_nearest.m}, label={lst:bow_recognition_nearest}]{../code/bow_recognition_nearest.m}
 
-The result of the implementation with the default value of codebook size is a $76.76\%$ accuracy.
+The result of the implementation with the default value of codebook size is a $76.76\%$ accuracy detecting cars.
 
 \section*{Bayesian Classification}
 
+The second classification method proposed consist on a Bayesian Classification. On this method, for each of the features of each image, the prior distributions is found considering that it follows a normal distribution.
+So with the training data the $P(hist|car)$ and $P(hist|!car)$ are computed and considering that $P(car)=P(!car)=0.5$, to classify each image, only is necessary to evaluate $log[P(hist|car)]$ and $log[P(hist|!car)]$. The logarithmic is used for numerical stability, so the implementation is listed in Listing~\ref{lst:bow_recognition_bayes}.
+
 \lstinputlisting[language=MATLAB, caption=\texttt{bow\_recognition\_bayes.m}, label={lst:bow_recognition_bayes}]{../code/bow_recognition_bayes.m}
 
-The result of the implementation with the default value of codebook size is a $70.70\%$ accuracy.
+The result of the implementation with the default value of codebook size is a $70.70\%$ accuracy detecting cars.
 
 \section*{Results and Conclusions}
 
-Create a table that for different values of K (sizeCodebook) the result for each of the classification methods.
+To go further, the classification has been performed for different codebook sizes, going from 10, to 300. Between 20 and 50 has been observed the best results using Bayes and Nearest Neighbors classifiers achieving more than $95\%$ of accuracy. As the codebook size increases, the performance of both classifiers decreases due to the fact that as bigger the codebook, more combinations of BoW and with an small dataset (only 100 training instances) the precision at the time to classify decreases.
 
-% Size Codebook & Nearest Neighbor & Bayesian \\
-%
-% 10 & $50.50\%$ & $50.50\%$ \\
-% 20 & $93.94\%$ & $98.99\%$ \\
-% 50 & $96.97\%$ & $90.90\%$ \\
-% 100 & $86.86\%$ & $83.83\%$ \\
-% 150 & $81.81\%$ & $81.81\%$ \\
-% 200 & $76.76\%$ & $70.70\%$ \\
-% 250 & $64.64\%$ & $66.66\%$ \\
-% 300 & $65.65\%$ & $62.62\%$ \\
+\begin{table}
+    \centering
+    \begin{tabular}{ | c | c | c | }
+        \hline
+        \textbf{Size Codebook} & \textbf{Nearest Neighbor} & \textbf{Bayesian} \\
+        \hline \hline
+        10 & 50.50\% & 50.50\% \\
+        20 & 93.94\% & \textbf{98.99\%} \\
+        50 & \textbf{96.97\%} & 90.90\% \\
+        100 & 86.86\% & 83.83\% \\
+        150 & 81.81\% & 81.81\% \\
+        200 & 76.76\% & 70.70\% \\
+        250 & 64.64\% & 66.66\% \\
+        300 & 65.65\% & 62.62\% \\
+        \hline
+    \end{tabular}
+    \caption{Results for different codebook sizes.}
+    \label{tab:results}
+\end{table}
 
-
+In the Figure~\ref{fig:visualize_codebook_best} there are the codebooks of the best codebook sizes for Nearest Neighbor classification and Bayesian classification respectively.
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{.5\textwidth}
         \centering
-        \includegraphics[width=1\linewidth]{images/visualize_codebook_20}
-        \subcaption{$K=20$}
+        \includegraphics[width=1\linewidth]{images/visualize_codebook_50}
+        \subcaption{$K=50$}
     \end{subfigure}%
     \begin{subfigure}[b]{.5\textwidth}
         \centering
-        \includegraphics[width=1\linewidth]{images/visualize_codebook_50}
-        \subcaption{$K=50$}
+        \includegraphics[width=1\linewidth]{images/visualize_codebook_20}
+        \subcaption{$K=20$}
     \end{subfigure}
     \caption{Visualize codebook with better classification accuracy.}
     \label{fig:visualize_codebook_best}
