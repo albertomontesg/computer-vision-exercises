@@ -92,10 +92,48 @@ To perform a classification, is necessary to precompute this BoW histograms to a
 
 \section*{Nearest Neighbor Classification}
 
+
+\lstinputlisting[language=MATLAB, caption=\texttt{bow\_recognition\_nearest.m}, label={lst:bow_recognition_nearest}]{../code/bow_recognition_nearest.m}
+
+The result of the implementation with the default value of codebook size is a $76.76\%$ accuracy.
+
 \section*{Bayesian Classification}
+
+\lstinputlisting[language=MATLAB, caption=\texttt{bow\_recognition\_bayes.m}, label={lst:bow_recognition_bayes}]{../code/bow_recognition_bayes.m}
+
+The result of the implementation with the default value of codebook size is a $70.70\%$ accuracy.
 
 \section*{Results and Conclusions}
 
 Create a table that for different values of K (sizeCodebook) the result for each of the classification methods.
+
+% Size Codebook & Nearest Neighbor & Bayesian \\
+%
+% 10 & $50.50\%$ & $50.50\%$ \\
+% 20 & $93.94\%$ & $98.99\%$ \\
+% 50 & $96.97\%$ & $90.90\%$ \\
+% 100 & $86.86\%$ & $83.83\%$ \\
+% 150 & $81.81\%$ & $81.81\%$ \\
+% 200 & $76.76\%$ & $70.70\%$ \\
+% 250 & $64.64\%$ & $66.66\%$ \\
+% 300 & $65.65\%$ & $62.62\%$ \\
+
+
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.5\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{images/visualize_codebook_20}
+        \subcaption{$K=20$}
+    \end{subfigure}%
+    \begin{subfigure}[b]{.5\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{images/visualize_codebook_50}
+        \subcaption{$K=50$}
+    \end{subfigure}
+    \caption{Visualize codebook with better classification accuracy.}
+    \label{fig:visualize_codebook_best}
+\end{figure}
 
 \end{document}

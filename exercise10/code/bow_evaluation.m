@@ -4,7 +4,7 @@
 %
 
 % training
-rng(23);
+rng(24);
 disp('Creating codebook');
 sizeCodebook = 200;
 numIterations = 10;

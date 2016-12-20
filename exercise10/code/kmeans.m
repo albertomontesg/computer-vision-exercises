@@ -1,15 +1,15 @@
-function vCenters = kmeans(vFeatures,k,numiter)
+function vCenters = kmeans(vFeatures,k,numIter)
 
     nPoints  = size(vFeatures, 1);
-
+    
     % Initialize each cluster center to a different random point.
     cIdx = randsample(1:nPoints, k);
     vCenters = vFeatures(cIdx,:);
 
     % Repeat for numiter iterations
-    for i=1:numiter,
+    for i=1:numIter,
         % Assign each point to the closest cluster
-        [~, clusters] = findnn(vFeatures, vCenters);
+        [clusters, ~] = findnn(vFeatures, vCenters);
 
         % Shift each cluster center to the mean of its assigned points
         for j=1:k
@@ -19,8 +19,7 @@ function vCenters = kmeans(vFeatures,k,numiter)
             vCenters(j,:) = mean(clusterPoints, 1);
         end
 
-        disp(strcat(num2str(i),'/',num2str(numiter),' iterations completed.'));
+        disp(strcat(num2str(i),'/',num2str(numIter),' iterations completed.'));
     end;
 
- 
 end
